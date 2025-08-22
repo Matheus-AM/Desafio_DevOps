@@ -76,4 +76,4 @@ native executable:
 
 After getting a cup of coffee, you'll be able to run this executable directly:
 
-> ./target/getting-started-1.0.0-SNAPSHOT-runner
+> ./target/#{PROJECT_NAME}#-#{PROJECT_VERSION}#-runner
