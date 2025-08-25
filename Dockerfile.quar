@@ -1,8 +1,7 @@
 FROM eclipse-temurin:21
-RUN mkdir /opt/app
-COPY target/quarkus-app /opt/app
+WORKDIR /work/
+COPY target/*-runner /work/application
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/opt/app/quarkus-run.jar"]
-
+ENTRYPOINT ["./application"]

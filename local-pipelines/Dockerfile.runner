@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # Deveria estar no settup-enviroment.sh, mas aqui é mais rapido localmente
 RUN apt-get update && apt-get install -y g++ zlib1g-dev libfreetype6-dev
+RUN apt update && apt install -y docker.io
 
 ENV PROJECT_NAME="getting-started"
 ENV PROJECT_VERSION="1.0.0-SNAPSHOT"

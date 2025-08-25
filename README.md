@@ -77,3 +77,12 @@ native executable:
 After getting a cup of coffee, you'll be able to run this executable directly:
 
 > ./target/#{PROJECT_NAME}#-#{PROJECT_VERSION}#-runner
+
+
+# buildar contianer dentro de container:
+Usar o Docker do host (mais simples)
+
+instalar WSL Ubuntu; configurar versão 2 como padrão.
+
+Montar o socket do Docker do host (/var/run/docker.sock) dentro do seu Container 1.
+
