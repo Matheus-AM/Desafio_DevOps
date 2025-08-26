@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "getting-started"
+  namespace: "ns-getting-started-des"
+  name: "getting-started-deployment"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "getting-started"
+  template:
+    metadata:
+      labels:
+        app: "getting-started"
+    spec:
+      containers:
+      - name: "getting-started"
+        image: "172.18.0.2:5000/getting-started:1.0.0-SNAPSHOT"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /hello
+            port: 8080
+          initialDelaySeconds: 20
+          failureThreshold: 20
+          periodSeconds: 30
+          timeoutSeconds: 1
+        

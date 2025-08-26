@@ -3,7 +3,6 @@ echo -e "\e[32mSettup Enviroment\e[0m"
 echo ""
 export GRAALVM_VERSION=24.2.2.0
 export JAVA_VERSION=21
-export DOCKER_REGISTRY="localhost:5000"
 
 source "$WORKDIR/local-pipelines/utils/replace-tokens.sh" "$WORKDIR/pom.xml"
 
