@@ -6,8 +6,6 @@ export JAVA_VERSION=21
 
 source "$WORKDIR/local-pipelines/utils/replace-tokens.sh" "$WORKDIR/pom.xml"
 
-
-
 curl -O -J -L "https://github.com/graalvm/mandrel/releases/download/mandrel-$GRAALVM_VERSION-Final/mandrel-java24-linux-amd64-$GRAALVM_VERSION-Final.tar.gz"
 tar -xf mandrel-java24-linux-amd64-$GRAALVM_VERSION-Final.tar.gz
 mv mandrel-java24-$GRAALVM_VERSION-Final /opt

@@ -3,12 +3,13 @@ WORKDIR=$(pwd)
 echo -e "\e[32mBuild Quarkus\e[0m"
 echo ""
 
+./mvnw package -Pnative
 
 ### binario
-./mvnw package -Pnative
-# "./target/$PROJECT_NAME-$PROJECT_VERSION-runner"
+# ./mvnw package -Pnative ## build
+# "./target/$PROJECT_NAME-$PROJECT_VERSION-runner" ## run
 
 ### jar
-# ./mvnw package
-# ./mvnw quarkus:dev
+# ./mvnw package ## build
+# ./mvnw quarkus:dev ## run
 echo ""

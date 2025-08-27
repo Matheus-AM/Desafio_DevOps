@@ -1,88 +1,193 @@
-# Getting started with Quarkus
 
-This is a minimal CRUD service exposing a couple of endpoints over REST.
+### 🧾 `README.md`
 
-Under the hood, this demo uses:
+# 🚀 DevOps Challenge - Quarkus + Docker + Minikube + Registry
 
-- RESTEasy to expose the REST endpoints
-- REST-assured and JUnit 5 for endpoint testing
+Este projeto simula uma **pipeline local de CI/CD** utilizando tecnologias como Docker, Registry privado, Minikube e Kubernetes para build, push e deploy de uma aplicação Quarkus.
 
-## Requirements
+Ele utiliza uma arquitetura baseada em containers e scripts shell que orquestram as etapas de build, publicação da imagem e aplicação no cluster Kubernetes local.
 
-To compile and run this demo you will need:
+---
 
-- JDK 17+
-- GraalVM
+## 📦 Tecnologias utilizadas
 
-### Configuring GraalVM and JDK 17+
+| Tecnologia      | Descrição                                                                                  |
+|------------------|---------------------------------------------------------------------------------------------|
+| [Quarkus](https://quarkus.io/) | Framework Java para microserviços, com foco em desempenho e startup rápidos.        |
+| [Docker](https://www.docker.com/products/docker-desktop) | Containerização da aplicação e ambientes auxiliares (registry, runner, etc).       |
+| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | Cluster Kubernetes local para testes e desenvolvimento.                           |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/) | CLI para interação com o cluster Kubernetes.                                      |
+| WSL2 (opcional) | Permite ambiente Linux nativo em máquinas Windows para maior compatibilidade de scripts.   |
 
-Make sure that both the `GRAALVM_HOME` and `JAVA_HOME` environment variables have
-been set, and that a JDK 17+ `java` command is on the path.
+---
 
-See the [Building a Native Executable guide](https://quarkus.io/guides/building-native-image-guide)
-for help setting up your environment.
+## 🖥️ Pré-requisitos
 
-## Building the application
+Instale as seguintes ferramentas **no seu sistema operacional principal (Windows)**:
 
-Launch the Maven build on the checked out sources of this demo:
+- ✅ [Docker Desktop](https://www.docker.com/products/docker-desktop)
+- ✅ [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- ✅ [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- ✅ [Git Bash](https://git-scm.com/downloads) **(necessário se você não estiver usando WSL2)**
+- ✅ (Opcional) [WSL2](https://learn.microsoft.com/pt-br/windows/wsl/install) com uma distro Linux como Ubuntu
 
-> ./mvnw package
+> 💡 Recomendado: executar o projeto via **WSL2** para evitar problemas de path (Linux vs Windows) com Docker, Minikube e kubectl.
 
-### Live coding with Quarkus
+---
 
-The Maven Quarkus plugin provides a development mode that supports
-live coding. To try this out:
-
-> ./mvnw quarkus:dev
-
-This command will leave Quarkus running in the foreground listening on port 8080.
-
-1. Visit the default endpoint: [http://127.0.0.1:8080](http://127.0.0.1:8080).
-    - Make a simple change to [src/main/resources/META-INF/resources/index.html](src/main/resources/META-INF/resources/index.html) file.
-    - Refresh the browser to see the updated page.
-2. Visit the `/hello` endpoint: [http://127.0.0.1:8080/hello](http://127.0.0.1:8080/hello)
-    - Update the response in [src/main/java/org/acme/quickstart/GreetingResource.java](src/main/java/org/acme/quickstart/GreetingResource.java). Replace `hello` with `hello there` in the `hello()` method.
-    - Refresh the browser. You should now see `hello there`.
-    - Undo the change, so the method returns `hello` again.
-    - Refresh the browser. You should now see `hello`.
-
-### Run Quarkus in JVM mode
-
-When you're done iterating in developer mode, you can run the application as a
-conventional jar file.
-
-First compile it:
-
-> ./mvnw package
-
-Then run it:
-
-> java -jar ./target/quarkus-app/quarkus-run.jar
-
-Have a look at how fast it boots, or measure the total native memory consumption.
-
-### Run Quarkus as a native executable
-
-You can also create a native executable from this application without making any
-source code changes. A native executable removes the dependency on the JVM:
-everything needed to run the application on the target platform is included in
-the executable, allowing the application to run with minimal resource overhead.
-
-Compiling a native executable takes a bit longer, as GraalVM performs additional
-steps to remove unnecessary codepaths. Use the  `native` profile to compile a
-native executable:
-
-> ./mvnw package -Dnative
-
-After getting a cup of coffee, you'll be able to run this executable directly:
-
-> ./target/#{PROJECT_NAME}#-#{PROJECT_VERSION}#-runner
+## contexto
+arquitetura no meu docker local: um runner que vai executar a pipeline (container 1), registry local (container 2), minikube (container 3). Todos estão na mesma docker-network para que o registry seja acessível pelo minikube. O container 1 compartilha do docker.sock do WSL2 que o executa para poder buildar um container do getting started do quarkus.
 
 
-# buildar contianer dentro de container:
-Usar o Docker do host (mais simples)
+## 📁 Estrutura do projeto
 
-instalar WSL Ubuntu; configurar versão 2 como padrão.
+```bash
+Desafio_DevOps
+├── Artefatos                          # Capturas de tela dos testes e execução
+│   └── ...
+├── local-pipelines                   # Pipeline e arquivos auxiliares
+│   ├── Dockerfile.runner             # Imagem do Runner da pipeline
+│   ├── k8s                           # Manifests Kubernetes
+│   │   ├── deployment.yaml
+│   │   ├── namespace.yaml
+│   │   └── service.yaml
+│   ├── pipeline.sh                   # Script principal da pipeline
+│   ├── steps                         # Etapas da pipeline
+│   │   ├── build-quarkus.sh
+│   │   ├── deploy-des.sh
+│   │   ├── deploy-prd.sh
+│   │   ├── kubernetes-deploy.sh
+│   │   ├── publish-registry.sh
+│   │   └── settup-enviroment.sh
+│   └── utils
+│       └── replace-tokens.sh        # Substituição dinâmica de tokens nos YAMLs
+├── make                              # Scripts auxiliares para automação
+│   ├── kube-create.sh
+│   ├── make.sh
+│   ├── minikube-init.sh
+│   ├── minikube-restart.sh
+│   ├── registry-down.sh
+│   ├── registry-up.sh
+│   ├── run-jar.sh
+│   ├── run-pipeline.sh
+│   └── run-pipelineit.sh
+├── Dockerfile.quar                   # Dockerfile para build da aplicação Quarkus
+├── README.md                         # Documentação do projeto
+├── mvnw                              # Wrapper Maven (Linux)
+├── mvnw.cmd                          # Wrapper Maven (Windows)
+├── pom.xml                           # Configuração do projeto Maven
+└── src                               # Código fonte da aplicação Quarkus
+    ├── main
+    │   └── ...
+    └── test
+        └── ...
 
-Montar o socket do Docker do host (/var/run/docker.sock) dentro do seu Container 1.
 
+make/                        # Scripts para orquestrar etapas da pipeline
+├── make.sh                  # Script principal para subir o ambiente e executar a pipeline
+├── registry-up.sh           # Sobe o registry privado com IP fixo
+├── minikube-init.sh         # Inicia o Minikube com configurações adequadas
+├── run-pipeline.sh          # Executa build, tag e push da aplicação para o registry
+├── kube-create.sh           # Aplica os manifests Kubernetes no cluster
+local-pipelines/
+├── k8s/                     # Arquivos de namespace, deployment e service com placeholders
+├── utils/replace-tokens.sh  # Utilitário para substituir tokens nos YAMLs
+```
+
+---
+
+## 🚀 Execução da Pipeline
+
+### ✅ Etapa única com o script `make.sh`
+
+No terminal (WSL2 recomendado):
+
+```bash
+export KUBE_PATH="/mnt/c/Users/<SEU_USUARIO>/.kube"
+bash make/make.sh
+```
+
+---
+
+### 📜 Etapas separadas (debug ou execução manual)
+
+1. **Subir registry local e rede docker customizada**:
+
+   ```bash
+   bash make/registry-up.sh
+   ```
+
+2. **Iniciar o Minikube e configurá-lo para usar o registry local**:
+
+   ```bash
+   bash make/minikube-init.sh
+   ```
+
+3. **Executar o runner para buildar a aplicação Quarkus e publicar no registry**:
+
+   ```bash
+   bash make/run-pipeline.sh
+   ```
+
+4. **Aplicar os manifests no cluster (namespace, deployment e service)**:
+
+   ```bash
+   bash make/kube-create.sh
+   ```
+
+---
+
+## 🧪 Acessando a aplicação
+
+### Após rodar o `kube-create.sh`, você pode acessar:
+
+#### 🔹 Via `minikube service`:
+
+```bash
+minikube service getting-started-service -n ns-getting-started-des
+```
+
+> ⚠️ Se este comando falhar com erro de múltiplos IPs, altere o service para `LoadBalancer` e rode:
+
+```bash
+minikube tunnel
+```
+
+A aplicação estará disponível em:
+
+```
+http://127.0.0.1:8080/hello
+```
+
+---
+
+## 🛠️ Problemas comuns
+
+### ❌ `Error: unable to read client-cert ...`
+
+Seu `kubectl` no container runner está tentando usar caminhos Windows no `config`.
+✅ **Solução**: monte os diretórios `.kube` e `.minikube` no container e ajuste os paths no `config`.
+
+```bash
+-v /mnt/c/Users/<SEU_USER>/.kube:/root/.kube:ro
+-v /mnt/c/Users/<SEU_USER>/.minikube:/root/.minikube:ro
+```
+
+---
+
+## 💡 Dicas avançadas
+
+* Se quiser rodar os scripts `make/*.sh` fora do WSL2 (ex: Git Bash), ajuste os paths e permissões.
+* A arquitetura suporta fácil expansão para CI/CD real (GitHub Actions, GitLab Runner, etc).
+* Você pode usar `minikube mount` ou `docker cp` se quiser copiar arquivos sem montar volumes.
+
+---
+
+## 📚 Referências úteis
+
+* 📘 [Documentação do Quarkus](https://quarkus.io/guides/)
+* 📘 [Documentação oficial do Minikube](https://minikube.sigs.k8s.io/docs/)
+* 📘 [kubectl cheatsheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+* 📘 [Docker Networking](https://docs.docker.com/network/bridge/)
+
+---

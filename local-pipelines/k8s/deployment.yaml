@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: "getting-started"
-  namespace: "ns-getting-started-des"
-  name: "getting-started-deployment"
+    app: "#{PROJECT_NAME}#"
+  namespace: "ns-#{PROJECT_NAME}#-#{ENVIROMENT}#"
+  name: "#{PROJECT_NAME}#-deployment"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "getting-started"
+      app: "#{PROJECT_NAME}#"
   template:
     metadata:
       labels:
-        app: "getting-started"
+        app: "#{PROJECT_NAME}#"
     spec:
       containers:
-      - name: "getting-started"
-        image: "172.18.0.2:5000/getting-started:1.0.0-SNAPSHOT"
+      - name: "#{PROJECT_NAME}#"
+        image: "#{REGISTRY_PATH}#/#{PROJECT_NAME}#:#{PROJECT_VERSION}#"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -29,4 +29,3 @@ spec:
           failureThreshold: 20
           periodSeconds: 30
           timeoutSeconds: 1
-        

@@ -8,16 +8,24 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     bash \
+    ca-certificates \
+    sudo \
+    g++ \
+    zlib1g-dev \
+    libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /etc/docker \
+ && echo '{ "insecure-registries": ["registry:5000", "172.18.0.2:5000"] }' > /etc/docker/daemon.json
+
 # Deveria estar no settup-enviroment.sh, mas aqui é mais rapido localmente
-RUN apt-get update && apt-get install -y g++ zlib1g-dev libfreetype6-dev
 RUN apt update && apt install -y docker.io
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
  && chmod +x kubectl \
  && mv kubectl /usr/local/bin/
 
- 
+
+
 ENV PROJECT_NAME="getting-started"
 ENV PROJECT_VERSION="1.0.0-SNAPSHOT"
 ENV WORKDIR='/s'

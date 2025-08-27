@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ns-getting-started-des
+  name: ns-#{PROJECT_NAME}#-#{ENVIROMENT}#
